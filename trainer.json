@@ -1,0 +1,24 @@
+[
+  {
+    "fach": "mathe",
+    "klassen": [
+      10
+    ],
+    "titel": "Trigonometrie",
+    "text": "10a · Sinus, Kosinus und Tangens. Seiten benennen, rechnen, Sachaufgaben.",
+    "info": "6 Aufgabentypen",
+    "pfad": "mathe/trigonometrie/",
+    "status": "offen"
+  },
+  {
+    "fach": "chemie",
+    "klassen": [
+      9
+    ],
+    "titel": "Erze und Hochofen",
+    "text": "9a · Erze, Oxidation und Reduktion, der Hochofen.",
+    "info": "6 Aufgabentypen",
+    "pfad": "chemie/erze-und-hochofen-g/",
+    "status": "offen"
+  }
+]

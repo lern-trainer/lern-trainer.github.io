@@ -1,0 +1,6 @@
+# Quellen der Trainer bleiben im Ordner der Lehrerin, nicht im öffentlichen Repo
+_*
+# Ältere Fassungen und Systemdateien
+*_v[0-9]*.html
+.DS_Store
+Thumbs.db

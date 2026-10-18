@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Übungsraum</title>
+<meta name="description" content="Interaktive Übungstrainer für Mathe, Chemie und AES, Klasse 9 und 10.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<!-- Erzeugt von bausteine/startseite_bauen.py (Lehrer-Plugin). Nicht von Hand ändern –
+     neue Trainer erscheinen von selbst, sobald sie im Ordner <fach>/<thema>/ liegen.
+     Schriften lokal aus fonts/ (SIL OFL), keine Verbindung zu Dritten. -->
+<style>
+@font-face{font-family:"Bricolage Grotesque";src:url(fonts/bricolage-grotesque-800.woff2) format("woff2");font-weight:800;font-display:swap}
+@font-face{font-family:"Caveat";src:url(fonts/caveat-700.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Atkinson Hyperlegible";src:url(fonts/atkinson-hyperlegible-400.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Atkinson Hyperlegible";src:url(fonts/atkinson-hyperlegible-700.woff2) format("woff2");font-weight:700;font-display:swap}
+:root{
+  --raum:#EEF1EF;          /* Seitenhintergrund */
+  --tafel:#15231D;         /* Tafelfläche */
+  --tafel-punkt:rgba(241,243,238,.07);
+  --tafel-glas:rgba(241,243,238,.08);
+  --tafel-glas-rand:rgba(241,243,238,.16);
+  --kreide:#F1F3EE;        /* Text auf der Tafel */
+  --kreide-gedimmt:#C9D6CF;
+  --kreide-leise:#A9BBB2;
+  --kreide-gelb:#F4E07A;   /* einziger Akzent auf der Tafel */
+  --tinte:#14201B;         /* Text auf hellem Grund */
+  --tinte-leise:#46524C;
+  --tinte-bald:#5C6862;
+  --karte:#FFFFFF;
+  --karte-bald:#F7F9F8;
+  --strich:#CBD6D0;        /* gestrichelte Trennlinien */
+  --strich-bald:#B7C4BD;
+  --mathe:#2747B5;  --mathe-hell:#9DB8F2;
+  --chemie:#F4C98A; --chemie-text:#3B2410;
+  --aes:#A8D8A6;    --aes-text:#173A1E;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-hand:"Caveat","Segoe Print","Bradley Hand",cursive;
+  --f-text:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--raum);color:var(--tinte);font-family:var(--f-text);font-size:16px;line-height:1.5}
+.wrap{max-width:1160px;margin:0 auto;padding:24px max(16px,env(safe-area-inset-right,0px)) 64px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:44px}
+
+/* Digitale Tafel */
+.tafel{background-color:var(--tafel);background-image:radial-gradient(var(--tafel-punkt) 1px,transparent 1px);background-size:22px 22px;border-radius:28px;padding:36px 44px 40px;color:var(--kreide);display:flex;flex-direction:column;gap:30px}
+.tafel-kopf{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px}
+.marke{font-family:var(--f-display);font-weight:800;font-size:22px;letter-spacing:-.01em}
+.hinweis{font-size:14px;color:var(--kreide-leise)}
+.tafel-haupt{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:28px}
+.tafel-text{flex:999 1 520px;min-width:0;display:flex;flex-direction:column;gap:14px}
+h1{margin:0;font-family:var(--f-display);font-weight:800;font-size:clamp(46px,8vw,76px);line-height:.98;letter-spacing:-.035em;text-wrap:balance}
+.kringel{position:relative;display:inline-block;font-family:var(--f-hand);font-weight:700;font-size:1.21em;letter-spacing:0;color:var(--kreide-gelb);padding:0 10px}
+.kringel svg{position:absolute;left:-12px;top:4px;width:112%;height:100%;overflow:visible}
+.tafel p{margin:0;font-size:19px;color:var(--kreide-gedimmt);max-width:46ch}
+
+/* Filter-Leiste (Glas-Pille) */
+.filter{flex:1 1 360px;display:flex;flex-direction:column;gap:10px}
+.schalter{display:flex;flex-wrap:wrap;gap:8px;background:var(--tafel-glas);border:1px solid var(--tafel-glas-rand);border-radius:999px;padding:6px}
+.schalter button{flex:1 1 auto;font:700 15px var(--f-text);background:transparent;color:var(--kreide);border:0;border-radius:999px;padding:10px 16px;min-height:44px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:background .15s,color .15s}
+.schalter button:hover{background:var(--tafel-glas)}
+.schalter button[aria-pressed="true"]{background:var(--kreide);color:var(--tinte)}
+.punkt{width:10px;height:10px;border-radius:50%}
+.klassen .schalter{align-self:flex-end}
+@media (max-width:700px){.klassen .schalter{align-self:stretch}}
+
+/* Karten mit Karteireiter */
+.karten{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:26px;padding-top:14px}
+@media (max-width:960px){.karten{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.karten{grid-template-columns:1fr}.tafel{padding:28px 22px 30px;border-radius:22px}}
+.karte{display:flex;flex-direction:column;text-decoration:none;color:var(--tinte)}
+.reiter{align-self:flex-start;font-weight:700;font-size:13px;letter-spacing:.04em;text-transform:uppercase;padding:8px 16px 10px;border-radius:12px 12px 0 0;margin-left:18px}
+.reiter.mathe{background:var(--mathe);color:#fff}
+.reiter.chemie{background:var(--chemie);color:var(--chemie-text)}
+.reiter.aes{background:var(--aes);color:var(--aes-text)}
+.blatt{background:var(--karte);border-radius:18px;padding:22px 22px 20px;display:flex;flex-direction:column;gap:10px;min-height:230px;box-shadow:0 18px 40px -26px rgba(20,32,27,.55);transition:transform .15s,box-shadow .15s}
+.blatt.mathe{border-top:4px solid var(--mathe)}
+.blatt.chemie{border-top:4px solid #C98A3A}
+.blatt.aes{border-top:4px solid #4E9A55}
+a.karte:hover .blatt,a.karte:focus-visible .blatt{transform:translateY(-4px);box-shadow:0 24px 44px -24px rgba(20,32,27,.6)}
+.titel{font-family:var(--f-display);font-weight:800;font-size:30px;letter-spacing:-.02em;line-height:1.1}
+.text{font-size:16px;color:var(--tinte-leise)}
+.fuss{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px dashed var(--strich);padding-top:14px;font-size:14px;color:var(--tinte-leise)}
+.start{font-weight:700;font-size:15px;background:var(--tinte);color:#fff;padding:9px 16px;border-radius:999px}
+.karte.bald{color:var(--tinte-bald)}
+.karte.bald .blatt{background:var(--karte-bald);border:1px dashed var(--strich-bald);box-shadow:none}
+.karte.bald .text{color:var(--tinte-bald)}
+.leer{grid-column:1/-1;font-family:var(--f-hand);font-size:30px;color:var(--tinte-bald);margin:0}
+
+a.karte:focus-visible{outline:none}
+a.karte:focus-visible .blatt{outline:3px solid var(--mathe);outline-offset:3px}
+button:focus-visible{outline:3px solid var(--kreide-gelb);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.blatt,.schalter button{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="tafel" aria-labelledby="titel">
+    <div class="tafel-kopf">
+      <span class="marke">Übungsraum</span>
+      <span class="hinweis">Klasse 9 und 10 · ohne Anmeldung</span>
+    </div>
+    <div class="tafel-haupt">
+      <div class="tafel-text">
+        <h1 id="titel">Was üben wir <span class="kringel">heute?<svg viewBox="0 0 230 90" aria-hidden="true"><path d="M20 50 C 10 15, 200 5, 215 40 C 228 75, 40 88, 14 58 C 5 46, 30 28, 60 22" fill="none" stroke="#F4E07A" stroke-width="3" stroke-linecap="round"/></svg></span></h1>
+        <p>Interaktive Trainer mit sofortigem Feedback. Wähl dein Fach und leg los.</p>
+      </div>
+      <div class="filter">
+        <div class="schalter" role="group" aria-label="Fach">
+          <button type="button" data-fach="alle" aria-pressed="true">Alle</button>
+          <button type="button" data-fach="mathe" aria-pressed="false"><span class="punkt" style="background:var(--mathe-hell)"></span>Mathe</button>
+          <button type="button" data-fach="chemie" aria-pressed="false"><span class="punkt" style="background:var(--chemie)"></span>Chemie</button>
+          <button type="button" data-fach="aes" aria-pressed="false"><span class="punkt" style="background:var(--aes)"></span>AES</button>
+        </div>
+        <div class="klassen" style="display:flex;flex-direction:column">
+          <div class="schalter" role="group" aria-label="Klasse">
+            <button type="button" data-klasse="0" aria-pressed="true">Alle Klassen</button>
+            <button type="button" data-klasse="9" aria-pressed="false">Kl. 9</button>
+            <button type="button" data-klasse="10" aria-pressed="false">Kl. 10</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main id="karten" class="karten" aria-live="polite"></main>
+</div>
+
+<script>
+/* Trainer-Liste: eingebettet (damit die Seite auch per Doppelklick geht) und
+   zusätzlich aus trainer.json geladen. Beides erzeugt startseite_bauen.py. */
+let TRAINER = [{"fach": "mathe", "klassen": [10], "titel": "Trigonometrie", "text": "10a · Sinus, Kosinus und Tangens. Seiten benennen, rechnen, Sachaufgaben.", "info": "6 Aufgabentypen", "pfad": "mathe/trigonometrie/", "status": "offen"}, {"fach": "chemie", "klassen": [9], "titel": "Erze und Hochofen", "text": "9a · Erze, Oxidation und Reduktion, der Hochofen.", "info": "6 Aufgabentypen", "pfad": "chemie/erze-und-hochofen-g/", "status": "offen"}];
+const FACHNAME = { mathe:"Mathe", chemie:"Chemie", aes:"AES" };
+const filter = { fach:"alle", klasse:0 };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function render(){
+  const liste = TRAINER.filter(t => (filter.fach === "alle" || t.fach === filter.fach) && (!filter.klasse || t.klassen.includes(filter.klasse)));
+  const ziel = document.getElementById("karten");
+  if (!liste.length){ ziel.innerHTML = '<p class="leer">Hier ist die Tafel noch leer. Bald kommt mehr!</p>'; return; }
+  ziel.innerHTML = liste.map(t => {
+    const offen = t.status === "offen" && t.pfad;
+    const tag = offen ? "a" : "div";
+    const href = offen ? ` href="${esc(t.pfad)}"` : "";
+    const kl = "Kl. " + t.klassen.join("/");
+    const fuss = offen
+      ? `<span>${esc(t.info || "")}</span><span class="start">Starten</span>`
+      : `<span>In Vorbereitung</span>`;
+    return `<${tag} class="karte${offen ? "" : " bald"}"${href}>
+      <span class="reiter ${t.fach}">${FACHNAME[t.fach]} · ${kl}</span>
+      <div class="blatt${offen ? " " + t.fach : ""}">
+        <span class="titel">${esc(t.titel)}</span>
+        <span class="text">${esc(t.text)}</span>
+        <div class="fuss">${fuss}</div>
+      </div>
+    </${tag}>`;
+  }).join("");
+}
+
+document.querySelectorAll("[data-fach]").forEach(b => b.addEventListener("click", () => {
+  filter.fach = b.dataset.fach;
+  document.querySelectorAll("[data-fach]").forEach(x => x.setAttribute("aria-pressed", x === b));
+  render();
+}));
+document.querySelectorAll("[data-klasse]").forEach(b => b.addEventListener("click", () => {
+  filter.klasse = Number(b.dataset.klasse);
+  document.querySelectorAll("[data-klasse]").forEach(x => x.setAttribute("aria-pressed", x === b));
+  render();
+}));
+render();
+fetch("trainer.json",{cache:"no-store"}).then(r => r.ok ? r.json() : null).then(l => { if (Array.isArray(l)) { TRAINER = l; render(); } }).catch(() => {});
+</script>
+</body>
+</html>
